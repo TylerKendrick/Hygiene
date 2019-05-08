@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 namespace Hygiene
 {
+    /// <summary>
+    /// Provides methods to create type specific sanitizer visitors and transformations.
+    /// </summary>
     public sealed class SanitizerBuilder
     {
         private readonly IDictionary<Type, object> _sanitizers
@@ -11,6 +14,12 @@ namespace Hygiene
 
         internal SanitizerBuilder() { }
 
+        /// <summary>
+        /// Creates a specific type sanitizer configuration with the supplied visitor.
+        /// </summary>
+        /// <typeparam name="T">The type to configure.</typeparam>
+        /// <param name="visitor">The transformations to perform on an instance.</param>
+        /// <returns>The original object reference with the newly transformed values.</returns>
         public ISanitizerTypeBuilder<T> ForType<T>(Visitor<T> visitor)
             => ForType(new AsyncVisitor<T>((ref T data) =>
             {
@@ -18,6 +27,12 @@ namespace Hygiene
                 return Task.CompletedTask;
             }));
 
+        /// <summary>
+        /// Creates a specific type sanitizer configuration with the supplied visitor.
+        /// </summary>
+        /// <typeparam name="T">The type to configure.</typeparam>
+        /// <param name="visitor">The transformations to perform on an instance.</param>
+        /// <returns>The original object reference with the newly transformed values.</returns>
         public ISanitizerTypeBuilder<T> ForType<T>(AsyncVisitor<T> visitor)
         {
             var result = new SanitizerTypeBuilder<T>();
@@ -26,6 +41,12 @@ namespace Hygiene
             return result;
         }
 
+        /// <summary>
+        /// Creates a specific type sanitizer configuration with the supplied visitor.
+        /// </summary>
+        /// <typeparam name="T">The type to configure.</typeparam>
+        /// <param name="builder">The configuration for a type, given a builder.</param>
+        /// <returns>The original object reference with the newly transformed values.</returns>
         public ISanitizerTypeBuilder<T> ForType<T>(Action<ISanitizerTypeBuilder<T>> builder)
         {
             var result = new SanitizerTypeBuilder<T>();
