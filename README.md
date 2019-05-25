@@ -18,7 +18,7 @@ var configuration = new SanitizerConfigurationProvider(builder =>
 
     //storing the builder configuration allows you to use it later.
     var stringSanitizer = builder
-        // You may also use the type configuration to change the ref instanc.e
+        // You may also use the type configuration to change the ref instance.
         .ForType<string>((ref string value) =>
             value = value.Trim());
     
