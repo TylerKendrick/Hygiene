@@ -39,3 +39,31 @@ To use a sanitizer, simply pass the object by reference and invoke the sanitizer
 var phoneNumber = "1- 555-555-5555";
 sanitizer.Sanitizer(ref phoneNumber);
 ```
+
+## Extending the sanitizers
+To add new builder operations for your custom types, you can create extension classes to implement your custom behaviors.
+
+```
+public static class SanitizerBuilderExtensions
+{
+    public static ISanitizerTypeBuilder<Foo> Encrypt(
+        this ISanitizerTypeBuilder<Foo> self,
+        RijndaelManaged algorithm) => self
+        .Property(instance => instance.Bar)
+        .Transform((ref string instance) =>
+        {
+            var iv = algorithm.IV;
+            var length = iv.Length;
+            var encryptor = algorithm.CreateEncryptor(algorithm.Key, iv);
+            using (var memoryStream = new MemoryStream())
+            {
+                memoryStream.Write(BitConverter.GetBytes(length), 0, sizeof(int));
+                memoryStream.Write(iv, 0, length);
+                using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
+                using (var streamWriter = new StreamWriter(cryptoStream))
+                    streamWriter.Write(instance.Bar);
+                instance.Bar = Convert.ToBase64String(memoryStream.ToArray());
+            }
+        });
+}
+```
