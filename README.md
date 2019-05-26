@@ -12,7 +12,7 @@ The [CWE/SANS Institute's top 25 most dangerous software errors](https://www.san
 ## Quickstart
 To create an object sanitizer, you need to first configure Hygiene to be aware of the types you are supporting.
 
-```
+```csharp
 var configuration = new SanitizerConfigurationProvider(builder => 
 {
     //Non-primitive type builders allow for property mutations.
@@ -39,7 +39,7 @@ var stringSanitizer = configuration.CreateSanitizer<string>();
 
 To use a sanitizer, simply pass the object by reference and invoke the sanitizer.
 
-```
+```csharp
 var phoneNumber = "1- 555-555-5555";
 sanitizer.Sanitizer(ref phoneNumber);
 ```
@@ -47,7 +47,7 @@ sanitizer.Sanitizer(ref phoneNumber);
 ## Extending the sanitizers
 To add new builder operations for your custom types, you can create extension classes to implement your custom behaviors.
 
-```
+```csharp
 public static class SanitizerBuilderExtensions
 {
     public static ISanitizerTypeBuilder<Foo> Encrypt(
