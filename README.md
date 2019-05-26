@@ -1,6 +1,7 @@
 # Hygiene
 A library to formally validate and sanitize assumptions for your code and data.  Hygiene's purpose is to provide common patterns and components for developers to write hygenic, secure, clean code.
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=TylerKendrick_Hygiene&metric=alert_status)](https://sonarcloud.io/dashboard?id=TylerKendrick_Hygiene)
 [![Build Status](https://dev.azure.com/hygiene/Hygiene/_apis/build/status/TylerKendrick.Hygiene?branchName=dev&jobName=Job)](https://dev.azure.com/hygiene/Hygiene/_build/latest?definitionId=1&branchName=dev)
 [![Nuget](https://img.shields.io/nuget/v/hygiene.svg)](https://www.nuget.org/packages/Hygiene/)
 [![GitHub](https://img.shields.io/github/license/tylerkendrick/hygiene.svg)](https://github.com/TylerKendrick/Hygiene/blob/dev/LICENSE)
