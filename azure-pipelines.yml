@@ -14,13 +14,6 @@ variables:
   packageVersion: '1.0.0'
 
 steps:
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'pack'
-    feedsToUse: 'select'
-    packagesToPack: 'Hygiene/Hygiene.csproj'
-    versioningScheme: 'byEnvVar'
-    versionEnvVar: 'packageVersion'
 - task: SonarCloudPrepare@1
   inputs:
     SonarCloud: 'Sonar.Hygiene'
@@ -28,6 +21,13 @@ steps:
     scannerMode: 'MSBuild'
     projectKey: 'TylerKendrick_Hygiene'
     projectName: 'Hygiene'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'pack'
+    feedsToUse: 'select'
+    packagesToPack: 'Hygiene/Hygiene.csproj'
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'packageVersion'
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
