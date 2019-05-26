@@ -14,6 +14,12 @@ variables:
   packageVersion: '1.0.0'
 
 steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+    vstsFeed: '/01ab27a6-4e76-48e4-8a49-cbf4da476cc7'
 - task: SonarCloudPrepare@1
   inputs:
     SonarCloud: 'Sonar.Hygiene'
@@ -23,14 +29,24 @@ steps:
     projectName: 'Hygiene'
 - task: DotNetCoreCLI@2
   inputs:
+    command: 'build'
+    projects: '**/Hygiene.csproj'
+    arguments: '--no-restore'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**\*.Tests.csproj'
+- task: SonarCloudAnalyze@1
+- task: DotNetCoreCLI@2
+  inputs:
     command: 'pack'
     feedsToUse: 'select'
     packagesToPack: 'Hygiene/Hygiene.csproj'
     versioningScheme: 'byEnvVar'
     versionEnvVar: 'packageVersion'
+    nobuild: true
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
-- task: SonarCloudAnalyze@1
