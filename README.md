@@ -6,6 +6,9 @@ A library to formally validate and sanitize assumptions for your code and data. 
 [![Nuget](https://img.shields.io/nuget/v/hygiene.svg)](https://www.nuget.org/packages/Hygiene/)
 [![GitHub](https://img.shields.io/github/license/tylerkendrick/hygiene.svg)](https://github.com/TylerKendrick/Hygiene/blob/dev/LICENSE)
 
+## Purpose
+The [CWE/SANS Institute's top 25 most dangerous software errors](https://www.sans.org/top25-software-errors/) lists [improper input validations](http://cwe.mitre.org/top25/archive/2011/2011_mitigations.html#Mit-M1) to be the number one cause of software issues.  In order to avoid these issues, a [Monster Mitigation](http://cwe.mitre.org/top25/index.html#Mitigations) list was created to instruct developers, architects, and engineers in best practices to reduce or eliminate the severity of these issues on software systems.  To assist in these mitigation processes, Hygiene provides an isolated component that can be easily identified to handle input sanitization and validation as a [singular responsibility](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html).  By integrating the component into your codebase, you can easily identify where code isn't covered by input sanitization and validation - and decouple this logic from your codebase, keeping your code [clean and cohesive](https://enterprisecraftsmanship.com/2015/09/02/cohesion-coupling-difference/).
+
 ## Quickstart
 To create an object sanitizer, you need to first configure Hygiene to be aware of the types you are supporting.
 
@@ -68,3 +71,10 @@ public static class SanitizerBuilderExtensions
         });
 }
 ```
+
+## Resources and Recommended Readings
+
+* [SANS Institute](https://www.sans.org/)
+* [Mitre CWE](http://cwe.mitre.org/index.html)
+* [SAFE Code](https://safecode.org/)
+* [OWASP](https://www.owasp.org/index.php/Main_Page)
