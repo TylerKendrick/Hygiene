@@ -27,11 +27,12 @@ steps:
     scannerMode: 'MSBuild'
     projectKey: 'TylerKendrick_Hygiene'
     projectName: 'Hygiene'
-- task: DotNetCoreCLI@2
+- task: MSBuild@1
   inputs:
-    command: 'build'
-    projects: '**/Hygiene.csproj'
-    arguments: '--no-restore'
+    solution: '**/*.sln'
+    platform: 'Any CPU'
+    configuration: 'release'
+    clean: true
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
