@@ -1,0 +1,53 @@
+# ASP.NET Core
+# Build and test ASP.NET Core projects targeting .NET Core.
+# Add steps that run tests, create a NuGet package, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  packageVersion: '1.0.0'
+
+steps:
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+    feedsToUse: 'select'
+    vstsFeed: '/01ab27a6-4e76-48e4-8a49-cbf4da476cc7'
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'Sonar.Hygiene'
+    organization: 'tylerkendrick-github'
+    scannerMode: 'MSBuild'
+    projectKey: 'TylerKendrick_Hygiene'
+    projectName: 'Hygiene'
+- task: MSBuild@1
+  inputs:
+    solution: '**/*.sln'
+    platform: 'Any CPU'
+    configuration: 'release'
+    clean: true
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: '**\*.Tests.csproj'
+- task: SonarCloudAnalyze@1
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'pack'
+    feedsToUse: 'select'
+    packagesToPack: 'Hygiene/Hygiene.csproj'
+    versioningScheme: 'byEnvVar'
+    versionEnvVar: 'packageVersion'
+    nobuild: true
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
