@@ -41,7 +41,7 @@ To use a sanitizer, simply pass the object by reference and invoke the sanitizer
 
 ```csharp
 var phoneNumber = "1- 555-555-5555";
-sanitizer.Sanitizer(ref phoneNumber);
+stringSanitizer.Sanitize(ref phoneNumber);
 ```
 
 ## Extending the sanitizers
