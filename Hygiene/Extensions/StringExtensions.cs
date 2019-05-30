@@ -11,19 +11,18 @@ namespace Hygiene
     public static class SanitizerBuilderStringExtensions
     {
         /// <summary>
-        /// Concatenates two <see cref="System.String"/> values.
+        /// Concatenates two <see cref="string"/> values.
         /// </summary>
         /// <param name="self">The target instance for mutation.</param>
         /// <param name="value">The value to concatenate.</param>
         /// <returns>The concatenated results.</returns>
         public static ISanitizerTypeBuilder<string> Add(
             this ISanitizerTypeBuilder<string> self,
-            string value) => self.Transform(
-                (ref string x) => x += value);
+            string value) => self.Transform(x => x + value);
 
         /// <summary>
         ///     Removes all leading and trailing occurrences of a set of characters specified
-        ///     in an array from the current System.String object.
+        ///     in an array from the current <see cref="string"/> object.
         /// </summary>
         /// <param name="self">The target instance for mutation.</param>
         /// <param name="trimChars">An array of Unicode characters to remove, or null.</param>
@@ -36,16 +35,13 @@ namespace Hygiene
         /// </returns>
         public static ISanitizerTypeBuilder<string> Trim(
             this ISanitizerTypeBuilder<string> self,
-            params char[] trimChars)
-            => self.Transform((ref string x) =>
-            {
-                x = trimChars?.Any() == true
-                    ? x.Trim(trimChars) : x.Trim();
-            });
+            params char[] trimChars) => self.Transform(
+                x => trimChars?.Any() == true
+                    ? x.Trim(trimChars) : x.Trim());
 
         /// <summary>
         ///     Removes all leading occurrences of a set of characters specified
-        ///     in an array from the current System.String object.
+        ///     in an array from the current <see cref="string"/> object.
         /// </summary>
         /// <param name="self">The target instance for mutation.</param>
         /// <param name="trimChars">An array of Unicode characters to remove, or null.</param>
@@ -58,16 +54,13 @@ namespace Hygiene
         /// </returns>
         public static ISanitizerTypeBuilder<string> TrimStart(
             this ISanitizerTypeBuilder<string> self,
-            params char[] trimChars)
-            => self.Transform((ref string x) =>
-            {
-                x = trimChars?.Any() == true
-                    ? x.TrimStart(trimChars) : x.TrimStart();
-            });
+            params char[] trimChars) => self.Transform(
+                x => trimChars?.Any() == true
+                    ? x.TrimStart(trimChars) : x.TrimStart());
 
         /// <summary>
         ///     Removes all trailing occurrences of a set of characters specified
-        ///     in an array from the current System.String object.
+        ///     in an array from the current <see cref="string"/> object.
         /// </summary>
         /// <param name="self">The target instance for mutation.</param>
         /// <param name="trimChars">An array of Unicode characters to remove, or null.</param>
@@ -80,12 +73,9 @@ namespace Hygiene
         /// </returns>
         public static ISanitizerTypeBuilder<string> TrimEnd(
             this ISanitizerTypeBuilder<string> self,
-            params char[] trimChars)
-            => self.Transform((ref string x) =>
-            {
-                x = trimChars?.Any() == true
-                    ? x.TrimEnd(trimChars) : x.TrimEnd();
-            });
+            params char[] trimChars) => self.Transform(
+                x => trimChars?.Any() == true
+                    ? x.TrimEnd(trimChars) : x.TrimEnd());
 
         /// <summary>
         ///     Returns a copy of this string converted to uppercase.
@@ -95,12 +85,9 @@ namespace Hygiene
         /// <returns>The uppercase equivalent of the current string.</returns>
         public static ISanitizerTypeBuilder<string> ToUpper(
             this ISanitizerTypeBuilder<string> self,
-            CultureInfo cultureInfo = null)
-            => self.Transform((ref string x) =>
-            {
-                x = cultureInfo == null
-                    ? x.ToUpper() : x.ToUpper(cultureInfo);
-            });
+            CultureInfo cultureInfo = null) => self.Transform(
+                x => cultureInfo == null
+                    ? x.ToUpper() : x.ToUpper(cultureInfo));
 
         /// <summary>
         ///     Returns a copy of this string converted to lowercase, using the casing rules
@@ -111,12 +98,9 @@ namespace Hygiene
         /// <returns>The lowercase equivalent of the current string.</returns>
         public static ISanitizerTypeBuilder<string> ToLower(
             this ISanitizerTypeBuilder<string> self,
-            CultureInfo cultureInfo = null)
-            => self.Transform((ref string x) =>
-            {
-                x = cultureInfo == null
-                    ? x.ToLower() : x.ToLower(cultureInfo);
-            });
+            CultureInfo cultureInfo = null) => self.Transform(
+                x => cultureInfo == null
+                    ? x.ToLower() : x.ToLower(cultureInfo));
 
         /// <summary>
         ///     In a specified input string, replaces all strings that match a specified regular
@@ -133,8 +117,7 @@ namespace Hygiene
         public static ISanitizerTypeBuilder<string> Replace(
             this ISanitizerTypeBuilder<string> self,
             string pattern, string replacement)
-            => self.Transform((ref string x)
-                => x = Regex.Replace(x, pattern, replacement));
+            => self.Transform(x => Regex.Replace(x, pattern, replacement));
 
         /// <summary>
         ///     Retrieves a substring from this instance. The substring starts at a specified
@@ -151,8 +134,7 @@ namespace Hygiene
         public static ISanitizerTypeBuilder<string> Substring(
             this ISanitizerTypeBuilder<string> self,
             int startIndex, int? length = null)
-            => self.Transform((ref string x)
-                => x = length == null
+            => self.Transform(x => length == null
                 ? x.Substring(startIndex)
                 : x.Substring(startIndex, length.Value));
 
@@ -167,8 +149,7 @@ namespace Hygiene
         public static ISanitizerTypeBuilder<string> Remove(
             this ISanitizerTypeBuilder<string> self,
             int startIndex, int? count = null)
-            => self.Transform((ref string x)
-                => x = count == null
+            => self.Transform(x => count == null
                 ? x.Remove(startIndex)
                 : x.Remove(startIndex, count.Value));
 
@@ -186,8 +167,7 @@ namespace Hygiene
         public static ISanitizerTypeBuilder<string> Normalize(
             this ISanitizerTypeBuilder<string> self,
             NormalizationForm? normalizationForm = null)
-            => self.Transform((ref string x)
-                => x = normalizationForm == null
+            => self.Transform(x => normalizationForm == null
                 ? x.Normalize()
                 : x.Normalize(normalizationForm.Value));
 
@@ -212,8 +192,7 @@ namespace Hygiene
         public static ISanitizerTypeBuilder<string> PadLeft(
             this ISanitizerTypeBuilder<string> self,
             int totalWidth, char? paddingChar = null)
-            => self.Transform((ref string x)
-                => x = paddingChar == null
+            => self.Transform(x => paddingChar == null
                 ? x.PadLeft(totalWidth)
                 : x.PadLeft(totalWidth, paddingChar.Value));
 
@@ -238,8 +217,7 @@ namespace Hygiene
         public static ISanitizerTypeBuilder<string> PadRight(
             this ISanitizerTypeBuilder<string> self,
             int totalWidth, char? paddingChar = null)
-            => self.Transform((ref string x)
-                => x = paddingChar == null
+            => self.Transform(x => paddingChar == null
                 ? x.PadRight(totalWidth)
                 : x.PadRight(totalWidth, paddingChar.Value));
     }

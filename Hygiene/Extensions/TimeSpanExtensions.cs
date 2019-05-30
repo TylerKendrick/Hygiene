@@ -1,19 +1,19 @@
-﻿namespace Hygiene
+﻿using System;
+
+namespace Hygiene
 {
     public static class TimeSpanExtensions
     {
-        public static ISanitizerTypeBuilder<System.TimeSpan> Add(
-            this ISanitizerTypeBuilder<System.TimeSpan> self,
-            System.TimeSpan value) => self.Transform(
-                (ref System.TimeSpan x) => x = x.Add(value));
+        public static ISanitizerTypeBuilder<TimeSpan> Add(
+            this ISanitizerTypeBuilder<TimeSpan> self,
+            TimeSpan value) => self.Transform(x => x.Add(value));
 
-        public static ISanitizerTypeBuilder<System.TimeSpan> Subtract(
-            this ISanitizerTypeBuilder<System.TimeSpan> self,
-            System.TimeSpan value) => self.Transform(
-                (ref System.TimeSpan x) => x = x.Subtract(value));
+        public static ISanitizerTypeBuilder<TimeSpan> Subtract(
+            this ISanitizerTypeBuilder<TimeSpan> self,
+            TimeSpan value) => self.Transform(x => x.Subtract(value));
 
-        public static ISanitizerTypeBuilder<System.TimeSpan> Negate(
-            this ISanitizerTypeBuilder<System.TimeSpan> self)
-            => self.Transform((ref System.TimeSpan x) => x = x.Negate());
+        public static ISanitizerTypeBuilder<TimeSpan> Negate(
+            this ISanitizerTypeBuilder<TimeSpan> self)
+            => self.Transform(x => x.Negate());
     }
 }

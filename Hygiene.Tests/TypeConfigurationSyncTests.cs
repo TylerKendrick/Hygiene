@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace Hygiene.Tests
 {
@@ -18,40 +17,6 @@ namespace Hygiene.Tests
             sanitizer.Sanitize(ref result);
 
             Assert.AreEqual("success", result);
-        }
-
-        [TestMethod]
-        public void ComplexTypeBuilderFailsWithoutSetter()
-        {
-            var configuration = new SanitizerConfigurationProvider(builder
-                => builder.ForType<ClassWithoutSetter>(typeBuilder => typeBuilder
-                    .Property(y => y.Value)
-                    .Transform((ref string input)
-                        => input = input.Replace("-", ""))));
-
-            var sanitizer = configuration.CreateSanitizer<ClassWithoutSetter>();
-            var result = new ClassWithoutSetter("555-555-5555");
-            var exception = Assert.ThrowsException<ArgumentException>(
-                () => sanitizer.Sanitize(ref result));
-
-            Assert.IsNotNull(exception);
-        }
-
-        [TestMethod]
-        public void ComplexTypeBuilderFailsWithPrivateSetter()
-        {
-            var configuration = new SanitizerConfigurationProvider(builder
-                => builder.ForType<ClassWithoutSetter>(typeBuilder => typeBuilder
-                    .Property(y => y.PrivateSetter)
-                    .Transform((ref string input)
-                        => input = input.Replace("-", ""))));
-
-            var sanitizer = configuration.CreateSanitizer<ClassWithoutSetter>();
-            var result = new ClassWithoutSetter("555-555-5555");
-            var exception = Assert.ThrowsException<ArgumentException>(
-                () => sanitizer.Sanitize(ref result));
-
-            Assert.IsNotNull(exception);
         }
 
         [TestMethod]

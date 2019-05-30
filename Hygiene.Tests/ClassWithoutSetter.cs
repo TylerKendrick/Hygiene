@@ -1,7 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-
-namespace Hygiene.Tests
+﻿namespace Hygiene.Tests
 {
     public class ClassWithoutSetter
     {

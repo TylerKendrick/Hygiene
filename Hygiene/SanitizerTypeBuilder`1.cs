@@ -14,11 +14,35 @@ namespace Hygiene
         private readonly List<Delegate> _visitors = new List<Delegate>();
 
         public ISanitizerTypeBuilder<TProperty> Property<TProperty>(
-            Expression<Func<T, TProperty>> memberExpression)
+            Expression<Func<T, TProperty>> expression)
         {
-            var expression = (MemberExpression)memberExpression.Body;
-            var memberInfo = expression.Member;
-            return Property<TProperty>(memberInfo as PropertyInfo);
+            if(expression.NodeType != ExpressionType.Lambda)
+            {
+                throw new InvalidOperationException("The expression must be a lambda expression.");
+            }
+            var parameter = expression.Parameters[0];
+            PropertyInfo EvaluateExpressionChain(Expression localExpression)
+            {
+                if(localExpression.NodeType != ExpressionType.MemberAccess)
+                {
+                    throw new InvalidOperationException("Only member access expressions are supported.");
+                }
+                var memberExpression = localExpression as MemberExpression;
+                var expressionBody = memberExpression.Expression;
+                var propertyInfo = memberExpression.Member as PropertyInfo;
+                if (propertyInfo == null)
+                {
+                    throw new InvalidOperationException("The member access expression must only reference properties.");
+                }
+
+                return expressionBody == null || expressionBody == parameter
+                    ? propertyInfo
+                    : EvaluateExpressionChain(expressionBody);
+            }
+            var propertyExpression = EvaluateExpressionChain(expression.Body);
+            return propertyExpression.GetSetMethod() == null
+                ? throw new InvalidOperationException("The property expression must have a publicly accessible setter.")
+                : Property<TProperty>(propertyExpression);
         }
 
         private ISanitizerTypeBuilder<TProperty> Property<TProperty>(
@@ -29,18 +53,25 @@ namespace Hygiene
             return builder;
         }
 
-        public ISanitizerTypeBuilder<T> Transform(Visitor<T> visitor)
-            => Transform(new AsyncVisitor<T>((ref T data) =>
-            {
-                visitor(ref data);
-                return Task.CompletedTask;
-            }));
-
         public ISanitizerTypeBuilder<T> Transform(AsyncVisitor<T> visitor)
         {
             _visitors.Add(visitor);
             return this;
         }
+
+        public ISanitizerTypeBuilder<T> Transform(Visitor<T> visitor)
+            => Transform((ref T data) =>
+            {
+                visitor(ref data);
+                return Task.CompletedTask;
+            });
+
+        public ISanitizerTypeBuilder<T> Transform(Func<T, T> mutator)
+            => Transform((ref T data) => data = mutator(data));
+
+
+        public ISanitizerTypeBuilder<T> Transform(Func<T, Task<T>> mutator)
+            => Transform((ref T data) => mutator(data));
 
         internal AsyncVisitor<T> BuildVisitor()
         {

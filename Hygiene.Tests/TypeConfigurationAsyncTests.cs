@@ -22,40 +22,6 @@ namespace Hygiene.Tests
         }
 
         [TestMethod]
-        public async Task ComplexTypeBuilderFailsWithoutSetter()
-        {
-            var configuration = new SanitizerConfigurationProvider(builder
-                => builder.ForType<ClassWithoutSetter>(typeBuilder => typeBuilder
-                    .Property(y => y.Value)
-                    .Transform((ref string input)
-                        => input = input.Replace("-", ""))));
-
-            var sanitizer = configuration.CreateSanitizer<ClassWithoutSetter>();
-            var result = new ClassWithoutSetter("555-555-5555");
-            var exception = await Assert.ThrowsExceptionAsync<ArgumentException>(
-                () => sanitizer.SanitizeAsync(ref result));
-
-            Assert.IsNotNull(exception);
-        }
-
-        [TestMethod]
-        public async Task ComplexTypeBuilderFailsWithPrivateSetter()
-        {
-            var configuration = new SanitizerConfigurationProvider(builder
-                => builder.ForType<ClassWithoutSetter>(typeBuilder => typeBuilder
-                    .Property(y => y.PrivateSetter)
-                    .Transform((ref string input)
-                        => input = input.Replace("-", ""))));
-
-            var sanitizer = configuration.CreateSanitizer<ClassWithoutSetter>();
-            var result = new ClassWithoutSetter("555-555-5555");
-            var exception = await Assert.ThrowsExceptionAsync<ArgumentException>(
-                () => sanitizer.SanitizeAsync(ref result));
-
-            Assert.IsNotNull(exception);
-        }
-
-        [TestMethod]
         public async Task ComplexTypeBuilderMeetsExpectations()
         {
             var configuration = new SanitizerConfigurationProvider(builder

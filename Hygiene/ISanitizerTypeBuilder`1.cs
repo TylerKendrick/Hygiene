@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Hygiene
 {
@@ -14,5 +15,7 @@ namespace Hygiene
 
         ISanitizerTypeBuilder<T> Transform(Visitor<T> visitor);
         ISanitizerTypeBuilder<T> Transform(AsyncVisitor<T> visitor);
+        ISanitizerTypeBuilder<T> Transform(Func<T, T> mutator);
+        ISanitizerTypeBuilder<T> Transform(Func<T, Task<T>> mutator);
     }
 }
