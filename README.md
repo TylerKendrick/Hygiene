@@ -64,7 +64,7 @@ public static class SanitizerBuilderExtensions
         this ISanitizerTypeBuilder<Foo> self,
         RijndaelManaged algorithm) => self
         .Property(instance => instance.Bar)
-        .Transform(instance) =>
+        .Transform(instance =>
         {
             var iv = algorithm.IV;
             var length = iv.Length;
