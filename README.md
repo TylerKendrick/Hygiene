@@ -18,23 +18,33 @@ var configuration = new SanitizerConfigurationProvider(builder =>
     //Non-primitive type builders allow for property mutations.
     builder.ForType<Foo>(typeBuilder => typeBuilder
         .Property(instance => instance.Bar)
-        .Transform((ref string bar) => bar = bar.Trim()));
+        .Transform(bar => bar.Trim()));
 
     //storing the builder configuration allows you to use it later.
-    var stringSanitizer = builder
+    var localSanitizer = builder
         // You may also use the type configuration to change the ref instance.
         .ForType<string>((ref string value) =>
-            value = value.Trim());
+        {
+            //Using the pass-by-ref transformer allows conditional assignment.
+            if(value != null) value = value.Trim()
+        });
     
+    //Typed builders can be converted into Visitor delegate instances.
     builder.ForType<Bar>(typeBuilder => typeBuilder
         .Property(instance => instance.FooBar)
-        .Transform(stringSanitizer));
+        .Transform(localSanitizer));
 });
 
 // use DI or create the sanitizer yourself
 var fooSanitizer = configuration.CreateSanitizer<Foo>();
 var barSanitizer = configuration.CreateSanitizer<Bar>();
 var stringSanitizer = configuration.CreateSanitizer<string>();
+```
+
+Alternatively, you can create an instance for one-off types without a configuration provider with a static factory method.
+
+```csharp
+var sanitizer = Sanitzer.Create<string>(instance => instance.Replace(' ', ''));
 ```
 
 To use a sanitizer, simply pass the object by reference and invoke the sanitizer.
@@ -54,7 +64,7 @@ public static class SanitizerBuilderExtensions
         this ISanitizerTypeBuilder<Foo> self,
         RijndaelManaged algorithm) => self
         .Property(instance => instance.Bar)
-        .Transform((ref string instance) =>
+        .Transform(instance) =>
         {
             var iv = algorithm.IV;
             var length = iv.Length;
@@ -66,7 +76,8 @@ public static class SanitizerBuilderExtensions
                 using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
                 using (var streamWriter = new StreamWriter(cryptoStream))
                     streamWriter.Write(instance.Bar);
-                instance.Bar = Convert.ToBase64String(memoryStream.ToArray());
+                // This code sets the referenced variable
+                return Convert.ToBase64String(memoryStream.ToArray());
             }
         });
 }
