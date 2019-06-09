@@ -10,11 +10,8 @@ namespace Hygiene.Tests
         [TestMethod]
         public async Task SimpleTypeBuilderMeetsExpectations()
         {
-            var configuration = new SanitizerConfigurationProvider(builder
-                => builder.ForType((ref string input)
-                    => input = input.Trim('-')));
-
-            var sanitizer = configuration.CreateSanitizer<string>();
+            var sanitizer = Sanitizer.Create<string>(
+                input => input.Trim('-'));
             var result = "--success--";
             await sanitizer.SanitizeAsync(ref result);
 
@@ -24,13 +21,12 @@ namespace Hygiene.Tests
         [TestMethod]
         public async Task ComplexTypeBuilderMeetsExpectations()
         {
-            var configuration = new SanitizerConfigurationProvider(builder
-                => builder.ForType<TestClass>(typeBuilder => typeBuilder
+            var sanitizer = Sanitizer.Create<TestClass>(
+                typeBuilder => typeBuilder
                     .Property(y => y.PhoneNumber)
                     .Transform((ref string input)
-                        => input = input.Replace("-", ""))));
+                        => input = input.Replace("-", "")));
 
-            var sanitizer = configuration.CreateSanitizer<TestClass>();
             var result = new TestClass
             {
                 PhoneNumber = "555-555-5555"
@@ -43,18 +39,17 @@ namespace Hygiene.Tests
         [TestMethod]
         public async Task CompositeBuilderMeetsExpectations()
         {
-            var configuration = new SanitizerConfigurationProvider(builder
-                => builder.ForType<TestClass>(typeBuilder =>
+            var sanitizer = Sanitizer.Create<TestClass>(
+                typeBuilder =>
                 {
                     var propertyBuilder = typeBuilder
                         .Property(x => x.PhoneNumber)
                         .Transform((ref string input)
                             => input = input.Replace("-", "")).Trim();
 
-                    propertyBuilder.Transform((ref string input) => input = $"1-{input}");
-                }));
+                    propertyBuilder.Transform(input => $"1-{input}");
+                });
 
-            var sanitizer = configuration.CreateSanitizer<TestClass>();
             var result = new TestClass
             {
                 PhoneNumber = " 555-555-5555 "

@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Hygiene
 {
+    /// <summary>
+    /// Provides methods to configure value transformations for specified types.
+    /// </summary>
+    /// <typeparam name="T">The type to construct.</typeparam>
     internal sealed class SanitizerTypeBuilder<T> : ISanitizerTypeBuilder<T>
     {
         private readonly Dictionary<PropertyInfo, Func<Delegate>> _propertyVisitors
@@ -13,6 +17,12 @@ namespace Hygiene
 
         private readonly List<Delegate> _visitors = new List<Delegate>();
 
+        /// <summary>
+        /// Creates a new type configuration for the specified property.
+        /// </summary>
+        /// <typeparam name="TProperty">The type to construct.</typeparam>
+        /// <param name="expression">The member expression for mutation.</param>
+        /// <returns>A fluent configuration api provider for building types.</returns>
         public ISanitizerTypeBuilder<TProperty> Property<TProperty>(
             Expression<Func<T, TProperty>> expression)
         {
@@ -53,12 +63,22 @@ namespace Hygiene
             return builder;
         }
 
+        /// <summary>
+        /// Configures a sanitizer instance to use the provided delegate for transformation.
+        /// </summary>
+        /// <param name="visitor">The delegate used to transform instance values.</param>
+        /// <returns>A fluent configuration api provider.</returns>
         public ISanitizerTypeBuilder<T> Transform(AsyncVisitor<T> visitor)
         {
             _visitors.Add(visitor);
             return this;
         }
 
+        /// <summary>
+        /// Configures a sanitizer instance to use the provided delegate for transformation.
+        /// </summary>
+        /// <param name="visitor">The delegate used to transform instance values.</param>
+        /// <returns>A fluent configuration api provider.</returns>
         public ISanitizerTypeBuilder<T> Transform(Visitor<T> visitor)
             => Transform((ref T data) =>
             {
@@ -66,12 +86,24 @@ namespace Hygiene
                 return Task.CompletedTask;
             });
 
+        /// <summary>
+        /// Configures a sanitizer instance to use the provided delegate for transformation.
+        /// </summary>
+        /// <param name="mutator">The delegate used to transform instance values.</param>
+        /// <returns>A fluent configuration api provider.</returns>
         public ISanitizerTypeBuilder<T> Transform(Func<T, T> mutator)
             => Transform((ref T data) => data = mutator(data));
 
-
+        /// <summary>
+        /// Configures a sanitizer instance to use the provided delegate for transformation.
+        /// </summary>
+        /// <param name="mutator">The delegate used to transform instance values.</param>
+        /// <returns>A fluent configuration api provider.</returns>
         public ISanitizerTypeBuilder<T> Transform(Func<T, Task<T>> mutator)
-            => Transform((ref T data) => mutator(data));
+            => Transform((ref T data) => data = mutator(data)
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult());
 
         internal AsyncVisitor<T> BuildVisitor()
         {
