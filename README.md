@@ -77,7 +77,7 @@ To add new builder operations for your custom types, you can create extension cl
 public static class CustomExtensions
 {
     //Demonstrates an extension for a non-primitive type.
-    public static ISanitizerTypeBuilder<Foo> CustomLogic
+    public static ISanitizerTypeBuilder<Foo> CustomLogic(
         this ISanitizerTypeBuilder<Foo> self,
         //Define custom parameters here.
         Bar extensionParameter) => self
