@@ -8,7 +8,7 @@ Provides input sanitizers for developers to write hygenic, secure, clean code.
 ![Net Standard](https://img.shields.io/badge/net%20standard-%3E%3Dv2.0-blue.svg)
 
 ## Purpose
-Hygiene sanitizers allow for configurable components to handle your input sanitization logic.
+Hygiene sanitizers allow for configurable components to handle your sanitization logic.
 ```csharp
 //Creates a sanitizer.
 var sanitizer = Sanitizer.Create<string>(
@@ -20,7 +20,7 @@ sanitizer.Sanitize(ref valueToSanitize);
 
 Console.WriteLine(valueToSanitize); //Outputs "correct".
 ```
-By integrating the sanitizers into your codebase, you can easily identify where code isn't covered by input sanitization and decouple this logic from your codebase, keeping your code [clean and cohesive](https://enterprisecraftsmanship.com/2015/09/02/cohesion-coupling-difference/).
+By integrating the sanitizers into your codebase, you can easily identify where code isn't covered by sanitization and decouple this logic from your codebase, keeping your code [clean and cohesive](https://enterprisecraftsmanship.com/2015/09/02/cohesion-coupling-difference/).
   
 The [CWE/SANS Institute's top 25 most dangerous software errors](https://www.sans.org/top25-software-errors/) lists [improper input validations](http://cwe.mitre.org/top25/archive/2011/2011_mitigations.html#Mit-M1) to be the number one cause of software issues.  In order to avoid these issues, a [Monster Mitigation](http://cwe.mitre.org/top25/index.html#Mitigations) list was created to instruct developers, architects, and engineers in best practices to reduce or eliminate the severity of these issues on software systems.  To assist in these mitigation processes, Hygiene provides an isolated component that can be easily identified to handle input sanitization and validation as a [singular responsibility](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html).
 
@@ -38,18 +38,18 @@ var configuration = new SanitizerConfigurationProvider(builder =>
             //Using the pass-by-ref transformer allows conditional assignment.
             if(value != null) value = value.Trim();
         });
-        
-    //Non-primitive type builders allow for property mutations.
-    builder.ForType<Foo>(typeBuilder => typeBuilder
-        .Property(instance => instance.Bar)
-        //Using the mutator overload for transform uses implicit reassignment.
-        .Transform(bar => bar.Trim()));
     
     //Typed builders can be converted into Visitor delegate instances.
     builder.ForType<Bar>(typeBuilder => typeBuilder
         .Property(instance => instance.FooBar)
         //Using the sanitizer overload for transform allows reuse of sanitizers.
         .Transform(localSanitizer));
+        
+    //Non-primitive type builders allow for property mutations.
+    builder.ForType<Foo>(typeBuilder => typeBuilder
+        .Property(instance => instance.Bar)
+        //Using the mutator overload for transform uses implicit reassignment.
+        .Transform(bar => bar.Trim()));
 });
 
 // use DI or create the sanitizer yourself
@@ -122,6 +122,19 @@ public static class SanitizerBuilderExtensions
         });
 }
 ```
+
+## Where to get it
+Install from nuget
+```
+> dotnet add package Hygiene --version 1.0.0
+```
+Or [download](https://github.com/TylerKendrick/Hygiene/releases/tag/v1.0.0) from the release page.
+
+## API Design Inspirations
+
+* [Fluent Validation](https://github.com/JeremySkinner/FluentValidation)
+* [Entity Framework Core](https://github.com/aspnet/EntityFrameworkCore)
+* [Automapper](https://github.com/AutoMapper/AutoMapper)
 
 ## Resources and Recommended Readings
 
