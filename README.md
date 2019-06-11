@@ -1,5 +1,5 @@
 # Hygiene
-Provides input sanitizers for developers to write hygenic, secure, clean code.
+Provides sanitizers for developers to write hygienic, secure, clean code.
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=TylerKendrick_Hygiene&metric=alert_status)](https://sonarcloud.io/dashboard?id=TylerKendrick_Hygiene)
 [![Build Status](https://dev.azure.com/hygiene/Hygiene/_apis/build/status/TylerKendrick.Hygiene?branchName=dev&jobName=Job)](https://dev.azure.com/hygiene/Hygiene/_build/latest?definitionId=1&branchName=dev)
