@@ -25,7 +25,20 @@ By integrating the sanitizers into your codebase, you can easily identify where 
 The [CWE/SANS Institute's top 25 most dangerous software errors](https://www.sans.org/top25-software-errors/) lists [improper input validations](http://cwe.mitre.org/top25/archive/2011/2011_mitigations.html#Mit-M1) to be the number one cause of software issues.  In order to avoid these issues, a [Monster Mitigation](http://cwe.mitre.org/top25/index.html#Mitigations) list was created to instruct developers, architects, and engineers in best practices to reduce or eliminate the severity of these issues on software systems.  To assist in these mitigation processes, Hygiene provides an isolated component that can be easily identified to handle input sanitization and validation as a [singular responsibility](https://blog.cleancoder.com/uncle-bob/2014/05/08/SingleReponsibilityPrinciple.html).
 
 ## Quickstart
-To create an object sanitizer, you need to first configure Hygiene to be aware of the types you are supporting.
+You need to first configure Hygiene to be aware of the types you are supporting. You can create an instance for one-off types without a configuration provider, using a static factory method from the non-generic Sanitizer object.
+
+```csharp
+var sanitizer = Sanitizer.Create<string>(instance => instance.Replace(' ', ''));
+```
+
+To use a sanitizer, simply pass the object by reference and invoke the sanitizer.
+
+```csharp
+var phoneNumber = "1- 555-555-5555";
+stringSanitizer.Sanitize(ref phoneNumber);
+```
+
+Alternatively, to create multiple sanitizer configurations for reuse, use a configuration provider.
 
 ```csharp
 var configuration = new SanitizerConfigurationProvider(builder => 
@@ -56,19 +69,6 @@ var configuration = new SanitizerConfigurationProvider(builder =>
 var fooSanitizer = configuration.CreateSanitizer<Foo>();
 var barSanitizer = configuration.CreateSanitizer<Bar>();
 var stringSanitizer = configuration.CreateSanitizer<string>();
-```
-
-Alternatively, you can create an instance for one-off types without a configuration provider with a static factory method.
-
-```csharp
-var sanitizer = Sanitzer.Create<string>(instance => instance.Replace(' ', ''));
-```
-
-To use a sanitizer, simply pass the object by reference and invoke the sanitizer.
-
-```csharp
-var phoneNumber = "1- 555-555-5555";
-stringSanitizer.Sanitize(ref phoneNumber);
 ```
 
 ## Extending the sanitizers
